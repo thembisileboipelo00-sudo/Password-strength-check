@@ -25,3 +25,30 @@ import java.util.Set;
  */
 public class PasswordChecker {
 
+      private static final String BREACH_LIST_PATH = "data/common_passwords.txt";
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("=== Password Strength & Breach Checker ===");
+        System.out.println("(Nothing you type here is stored or sent anywhere.)\n");
+
+        Set<String> breachedPasswords = loadBreachList(BREACH_LIST_PATH);
+
+        System.out.print("Enter a password to test: ");
+        String password = scanner.nextLine();
+
+        double entropy = calculateEntropyBits(password);
+        String strengthLabel = classifyStrength(entropy);
+        boolean isBreached = breachedPasswords.contains(password.toLowerCase());
+
+        System.out.println("\n--- Results ---");
+        System.out.printf("Length:            %d characters%n", password.length());
+        System.out.printf("Estimated entropy: %.1f bits%n", entropy);
+        System.out.printf("Strength rating:   %s%n", strengthLabel);
+        System.out.printf("Found in breach list: %s%n", isBreached ? "YES — do not use this password" : "No match found locally");
+
+        printSuggestions(password, entropy, isBreached);
+
+        scanner.close();
+    }
+
