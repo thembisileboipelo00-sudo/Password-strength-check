@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class PasswordChecker {
 
-      private static final String BREACH_LIST_PATH = "data/common_passwords.txt";
+    private static final String BREACH_LIST_PATH = "data/common_passwords.txt";
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -51,4 +51,36 @@ public class PasswordChecker {
 
         scanner.close();
     }
+       /**
+     * Estimates password entropy in bits using the standard formula:
+     *   entropy = length * log2(poolSize)
+     * where poolSize is the size of the character set the password draws from.
+     * This is a simplification (it assumes random selection from the pool,
+     * which real human-chosen passwords rarely are) — that limitation is
+     * called out in the README rather than hidden.
+     */
+    public static double calculateEntropyBits(String password) {
+        if (password == null || password.isEmpty()) {
+            return 0.0;
+        }
 
+        int poolSize = 0;
+        boolean hasLower = false, hasUpper = false, hasDigit = false, hasSymbol = false;
+
+        for (char c : password.toCharArray()) {
+            if (Character.isLowerCase(c)) hasLower = true;
+            else if (Character.isUpperCase(c)) hasUpper = true;
+            else if (Character.isDigit(c)) hasDigit = true;
+            else hasSymbol = true;
+        }
+
+        if (hasLower) poolSize += 26;
+        if (hasUpper) poolSize += 26;
+        if (hasDigit) poolSize += 10;
+        if (hasSymbol) poolSize += 32; // approx. printable ASCII symbols
+
+        if (poolSize == 0) return 0.0;
+
+        return password.length() * (Math.log(poolSize) / Math.log(2));
+    }
+   
