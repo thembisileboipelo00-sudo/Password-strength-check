@@ -116,4 +116,26 @@ public class PasswordChecker {
         }
         return passwords;
     }
-
+    
+    /**
+     * Prints concrete, actionable suggestions based on what was found.
+     * Kept separate from the scoring logic so it's easy to extend later
+     * (e.g. adding a "check for keyboard-walk patterns" rule) without
+     * touching the entropy or breach-check code.
+     */
+    private static void printSuggestions(String password, double entropy, boolean isBreached) {
+        System.out.println("\n--- Suggestions ---");
+        if (isBreached) {
+            System.out.println("- This exact password is known to be leaked. Change it everywhere you use it.");
+        }
+        if (password.length() < 12) {
+            System.out.println("- Use at least 12 characters; length matters more than complexity tricks.");
+        }
+        if (entropy < 60) {
+            System.out.println("- Mix uppercase, lowercase, digits, and symbols to widen the character pool.");
+        }
+        if (entropy >= 60 && !isBreached) {
+            System.out.println("- Looks solid. Consider a password manager so you never have to remember it.");
+        }
+    }
+}
