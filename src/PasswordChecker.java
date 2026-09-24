@@ -95,3 +95,25 @@ public class PasswordChecker {
         if (entropyBits < 128) return "Strong";
         return "Very Strong";
     }
+        /**
+     * Loads the local breach word-list into a Set for O(1) lookups.
+     * Returns an empty set (rather than crashing) if the file is missing,
+     * so the entropy check still works even without the data file.
+     */
+    private static Set<String> loadBreachList(String path) {
+        Set<String> passwords = new HashSet<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String trimmed = line.trim().toLowerCase();
+                if (!trimmed.isEmpty()) {
+                    passwords.add(trimmed);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("[Warning] Could not load breach list at '" + path
+                    + "'. Breach check will report no matches. (" + e.getMessage() + ")");
+        }
+        return passwords;
+    }
+
