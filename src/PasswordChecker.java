@@ -83,4 +83,15 @@ public class PasswordChecker {
 
         return password.length() * (Math.log(poolSize) / Math.log(2));
     }
-   
+       /**
+     * Converts a raw entropy value into a human-readable strength label.
+     * Thresholds are based on commonly cited guidance (e.g. NIST-adjacent
+     * rules of thumb): under 28 bits is very weak, 60+ is strong.
+     */
+    public static String classifyStrength(double entropyBits) {
+        if (entropyBits < 28) return "Very Weak";
+        if (entropyBits < 36) return "Weak";
+        if (entropyBits < 60) return "Reasonable";
+        if (entropyBits < 128) return "Strong";
+        return "Very Strong";
+    }
