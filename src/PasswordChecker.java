@@ -109,13 +109,32 @@ public class PasswordChecker {
      * touching the entropy or breach-check code.
      */
     private static void printSuggestions(String password, double entropy, boolean isBreached) {
-        System.out.println("\n--- Suggestions ---");
-        if (isBreached) {
-            System.out.println("- This exact password is known to be leaked. Change it everywhere you use it.");
-        }
-        if (password.length() < 12) {
-            System.out.println("- Use at least 12 characters; length matters more than complexity tricks.");
-        }
+    System.out.println("\n--- Suggestions ---");
+
+    if (isBreached) {
+        System.out.println("- This password was found in a breach list. Change it immediately, especially if reused elsewhere.");
+    }
+
+    if (entropy < 28) {
+        System.out.println("- Entropy is very low. Use a longer password (12+ characters recommended).");
+    } else if (entropy < 60) {
+        System.out.println("- Consider lengthening the password or mixing more character types (upper/lower/digits/symbols).");
+    }
+
+    if (password.length() < 12) {
+        System.out.println("- Aim for at least 12 characters — length matters more than complexity alone.");
+    }
+
+    boolean hasSymbol = password.chars().anyMatch(c -> !Character.isLetterOrDigit(c));
+    if (!hasSymbol) {
+        System.out.println("- Add symbols (e.g. !, @, #, %) to increase the character pool and entropy.");
+    }
+
+    if (isBreached == false && entropy >= 60) {
+        System.out.println("- Looks solid. Consider a password manager to keep it unique across sites.");
+    }
+}
+
         private static Set<String> loadBreachList(String path) {
     Set<String> breached = new HashSet<>();
     try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
